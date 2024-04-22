@@ -8,8 +8,8 @@ const stage = new Scenes.Stage([anonimScene, senderScene]);
 bot.use(session());
 bot.use(stage.middleware());
 
-bot.start(ctx => {
-	ctx.reply(
+bot.start(async ctx => {
+	await ctx.reply(
 		`Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
 		{
 			parse_mode: "HTML",
@@ -27,8 +27,8 @@ bot.start(ctx => {
 	);
 });
 
-bot.command("new_message", ctx => {
-	ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
+bot.command("new_message", async ctx => {
+	await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
 		reply_markup: {
 			inline_keyboard: [
 				[
@@ -42,38 +42,38 @@ bot.command("new_message", ctx => {
 	});
 });
 
-bot.action("anonim", ctx => {
-	ctx.scene.enter("anonimScene");
+bot.action("anonim", async ctx => {
+	await ctx.scene.enter("anonimScene");
 	ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
-	setTimeout(() => {
-		ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
+	setTimeout(async () => {
+		await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
 	}, 300);
 });
-bot.action("simple", ctx => {
-	ctx.scene.enter("senderScene");
+bot.action("simple", async ctx => {
+	await ctx.scene.enter("senderScene");
 	ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
-	setTimeout(() => {
-		ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
+	setTimeout(async () => {
+		await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
 	}, 300);
 });
 
-bot.hears("daily Umidxon", ctx => {
+bot.hears("daily Umidxon", async ctx => {
 	const channelId = -1001897939296;
 	const userId = ctx.from.id;
-	bot.telegram
+	await bot.telegram
 		.getChatMember(channelId, userId)
-		.then(member => {
+		.then(async member => {
 			if (
 				member.status == "creator" ||
 				member.status == "administrator" ||
 				member.status == "member"
 			) {
-				ctx.reply(
+				await ctx.reply(
 					`<b>Daily | Umidxon</b> kanaliga qo'shilish uchun havola:\n👉 https://t.me/+--6VdTGW8cxlYjdi`,
 					{ parse_mode: "HTML", protect_content: true }
 				);
 			} else {
-				ctx.reply(
+				await ctx.reply(
 					"Afsuski siz @Umidxon_blog kanaliga obuna bo'lmagan ekansiz. Avval kanalga obuna bo'ling!"
 				);
 			}
@@ -81,10 +81,13 @@ bot.hears("daily Umidxon", ctx => {
 		.catch(err => ctx.reply("Noma'lum xatolik yuzaga keldi, qayta urining"));
 });
 
-bot.on("text", ctx => {
-	ctx.reply(
+bot.on("text", async ctx => {
+	await ctx.reply(
 		"Menimcha noto'g'ri buyruq yubordingiz 🤷‍♂️, tekshirib qaytadan urining"
 	);
+});
+bot.on("message", async ctx => {
+	await ctx.reply("Faqat matnli xabar qabul qilinadi");
 });
 
 bot.launch(() => {
