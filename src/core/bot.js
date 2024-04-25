@@ -54,10 +54,43 @@ bot.action("simple", async ctx => {
 	ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
 	setTimeout(async () => {
 		await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
-	}, 300);
+	}, 100);
+});
+
+bot.action("cencel", async ctx => {
+	ctx.reply(
+		"<b>Muvaffaqiyatli bekor qilindi</b>\nYangi xabar yuborish uchun <b>/new_message</b> buyrug'idan foydalanishingiz mumkin",
+		{ parse_mode: "HTML" }
+	);
+	await ctx.scene.leave();
+	ctx.answerCbQuery("Bekor qilindi ✅");
+	await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
 });
 
 bot.hears("daily Umidxon", async ctx => {
+	const channelId = -1001897939296;
+	const userId = ctx.from.id;
+	await bot.telegram
+		.getChatMember(channelId, userId)
+		.then(async member => {
+			if (
+				member.status == "creator" ||
+				member.status == "administrator" ||
+				member.status == "member"
+			) {
+				await ctx.reply(
+					`<b>Daily | Umidxon</b> kanaliga qo'shilish uchun havola:\n👉 https://t.me/+--6VdTGW8cxlYjdi`,
+					{ parse_mode: "HTML", protect_content: true }
+				);
+			} else {
+				await ctx.reply(
+					"Afsuski siz @Umidxon_blog kanaliga obuna bo'lmagan ekansiz. Avval kanalga obuna bo'ling!"
+				);
+			}
+		})
+		.catch(err => ctx.reply("Noma'lum xatolik yuzaga keldi, qayta urining"));
+});
+bot.hears("Daily Umidxon", async ctx => {
 	const channelId = -1001897939296;
 	const userId = ctx.from.id;
 	await bot.telegram
