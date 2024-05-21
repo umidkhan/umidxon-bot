@@ -1,10 +1,11 @@
 const cron = require("node-cron");
 const axios = require("axios");
+require("dotenv").config()
 
 const task = cron.schedule("* * * * *", async () => {
 	try {
 		const response = await axios.post(
-			"https://umidxon-bot.onrender.com/telegram"
+			process.env.WEBHOOK_URI
 		);
 		console.log(`POST reqest sent: ${response.data}`);
 	} catch (err) {
