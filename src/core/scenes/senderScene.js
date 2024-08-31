@@ -26,7 +26,7 @@ senderScene.on("text", ctx => {
 		ctx.telegram
 			.sendMessage(
 				5511267540,
-				`📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${ctx.from.id}</code>\n💬 Xabar 👉 <i>${ctx.msg.text}</i>`,
+				`📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${ctx.from.id}" />${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${ctx.from.id}</code>\n💬 Xabar 👉 <i>${ctx.msg.text}</i>`,
 				{ parse_mode: "HTML" }
 			)
 			.catch(err =>
