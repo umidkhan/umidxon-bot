@@ -27,17 +27,6 @@ bot.start(async (ctx) => {
   );
 });
 
-bot.on("channel_post", (ctx) => {
-  const message = ctx.update.channel_post;
-
-  ctx.editMessageText(`${message.text}\n\n<b>@umidxon_blog</b>\n\n`, {
-    parse_mode: "HTML",
-  });
-  setTimeout(() => {
-    ctx.react("🆒");
-  }, 30000);
-});
-
 bot.command("new_message", async (ctx) => {
   await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
     reply_markup: {
