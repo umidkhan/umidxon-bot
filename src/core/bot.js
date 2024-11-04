@@ -45,16 +45,11 @@ bot.command("new_message", async (ctx) => {
 bot.action("anonim", async (ctx) => {
   await ctx.scene.enter("anonimScene");
   ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
-  setTimeout(async () => {
-    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
-  }, 300);
 });
+
 bot.action("simple", async (ctx) => {
   await ctx.scene.enter("senderScene");
   ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
-  setTimeout(async () => {
-    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
-  }, 100);
 });
 
 bot.action("cencel", async (ctx) => {
@@ -70,7 +65,6 @@ bot.action(/reply_(\d+)/, async (ctx) => {
   ctx.session.userId = ctx.match[1];
   ctx.scene.enter("adminReplyScene");
   ctx.answerCbQuery();
-  await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
 });
 
 bot.on("text", async (ctx) => {
