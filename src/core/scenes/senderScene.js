@@ -28,8 +28,26 @@ senderScene.on("text", (ctx) => {
       ctx.telegram
         .sendMessage(
           5511267540,
-          `📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${chatId}" >${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${ctx.from.id}</code>\n🔗 Username: ${ctx.from.username === undefined ? "Username not set" : "@" + ctx.from.username}\n💬 Xabar 👉 <i>${ctx.msg.text}</i>`,
-          { parse_mode: "HTML" }
+          `📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${chatId}" >${
+            ctx.from.first_name
+          }</a>\n🆔 Chat ID: <code>${ctx.from.id}</code>\n🔗 Username: ${
+            ctx.from.username === undefined
+              ? "Username not set"
+              : "@" + ctx.from.username
+          }\n💬 Xabar 👉 <i>${ctx.msg.text}</i>`,
+          {
+            parse_mode: "HTML",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Javob berish",
+                    callback_data: `reply_${ctx.from.id}`,
+                  },
+                ],
+              ],
+            },
+          }
         )
         .catch((err) =>
           ctx.reply(

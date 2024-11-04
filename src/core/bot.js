@@ -1,10 +1,10 @@
 const { Telegraf, session, Scenes } = require("telegraf");
-const { anonimScene, senderScene } = require("./scenes");
+const { anonimScene, senderScene, adminReplyScene } = require("./scenes");
 require("dotenv").config();
 
 const bot = new Telegraf(process.env.TOKEN);
 
-const stage = new Scenes.Stage([anonimScene, senderScene]);
+const stage = new Scenes.Stage([anonimScene, senderScene, adminReplyScene]);
 bot.use(session());
 bot.use(stage.middleware());
 
@@ -64,55 +64,13 @@ bot.action("cencel", async (ctx) => {
   );
   await ctx.scene.leave();
   ctx.answerCbQuery("Bekor qilindi ✅");
+});
+
+bot.action(/reply_(\d+)/, async (ctx) => {
+  ctx.session.userId = ctx.match[1];
+  ctx.scene.enter("adminReplyScene");
+  ctx.answerCbQuery();
   await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msgId);
-});
-
-bot.hears("daily Umidxon", async (ctx) => {
-  const channelId = -1001897939296;
-  const userId = ctx.from.id;
-  await bot.telegram
-    .getChatMember(channelId, userId)
-    .then(async (member) => {
-      if (
-        member.status == "creator" ||
-        member.status == "administrator" ||
-        member.status == "member"
-      ) {
-        await ctx.reply(
-          `<b>Daily | Umidxon</b> kanaliga qo'shilish uchun havola:\n👉 https://t.me/+--6VdTGW8cxlYjdi`,
-          { parse_mode: "HTML", protect_content: true }
-        );
-      } else {
-        await ctx.reply(
-          "Afsuski siz @Umidxon_blog kanaliga obuna bo'lmagan ekansiz. Avval kanalga obuna bo'ling!"
-        );
-      }
-    })
-    .catch((err) => ctx.reply("Noma'lum xatolik yuzaga keldi, qayta urining"));
-});
-
-bot.hears("Daily Umidxon", async (ctx) => {
-  const channelId = -1001897939296;
-  const userId = ctx.from.id;
-  await bot.telegram
-    .getChatMember(channelId, userId)
-    .then(async (member) => {
-      if (
-        member.status == "creator" ||
-        member.status == "administrator" ||
-        member.status == "member"
-      ) {
-        await ctx.reply(
-          `<b>Daily | Umidxon</b> kanaliga qo'shilish uchun havola:\n👉 https://t.me/+--6VdTGW8cxlYjdi`,
-          { parse_mode: "HTML", protect_content: true }
-        );
-      } else {
-        await ctx.reply(
-          "Afsuski siz @Umidxon_blog kanaliga obuna bo'lmagan ekansiz. Avval kanalga obuna bo'ling!"
-        );
-      }
-    })
-    .catch((err) => ctx.reply("Noma'lum xatolik yuzaga keldi, qayta urining"));
 });
 
 bot.on("text", async (ctx) => {
@@ -120,8 +78,19 @@ bot.on("text", async (ctx) => {
     "Menimcha noto'g'ri buyruq yubordingiz 🤷‍♂️, tekshirib qaytadan urining"
   );
 });
+
 bot.on("message", async (ctx) => {
   await ctx.reply("Faqat matnli xabar qabul qilinadi");
+});
+
+bot.catch((err, ctx) => {
+  console.error(`~! ERROR: \n ${err}`);
+  ctx.reply("Noma'lum xatolik yuzaga keldi\nKeyinroq qayta urinib ko'ring");
+  ctx.telegram.sendMessage(
+    -1002069272637,
+    `<a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a> foydalanuvchi bilan xatolik yuz berdi: \n${err.message}`,
+    { parse_mode: "HTML" }
+  );
 });
 
 bot.launch(() => {
