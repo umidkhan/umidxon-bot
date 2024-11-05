@@ -14,6 +14,7 @@ senderScene.enter((ctx) =>
     }
   )
 );
+console.log("Hello world");
 
 senderScene.on("text", (ctx) => {
   const chatId = ctx.from.id;
