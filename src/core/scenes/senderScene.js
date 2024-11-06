@@ -14,7 +14,6 @@ senderScene.enter((ctx) =>
     }
   )
 );
-console.log("Hello world");
 
 senderScene.on("text", (ctx) => {
   const chatId = ctx.from.id;
@@ -29,14 +28,9 @@ senderScene.on("text", (ctx) => {
       ctx.telegram
         .sendMessage(
           5511267540,
-          `📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${
-            ctx.from.id
-          }" >${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${
-            ctx.from.id
-          }</code>\n🔗 Username: ${
-            ctx.from.username === undefined
-              ? "Username not set"
-              : "@" + ctx.from.username
+          `📨 <b>Sizda yangi xabar bor</b>\n\n👤 Ism: <a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${ctx.from.id}</code>\n🔗 Username: ${ctx.from.username === undefined
+            ? "Username not set"
+            : "@" + ctx.from.username
           }\n💬 Xabar 👉 \n<i>${ctx.msg.text}</i>`,
           {
             parse_mode: "HTML",
