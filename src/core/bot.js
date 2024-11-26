@@ -25,6 +25,14 @@ bot.start(async (ctx) => {
       },
     }
   );
+
+  try {
+    axios.get(`${process.env.API}chatId?chatId=${ctx.chat.id}`).then((res) => {
+      console.log(res.data);
+    });
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 bot.command("new_message", async (ctx) => {
@@ -45,11 +53,13 @@ bot.command("new_message", async (ctx) => {
 bot.action("anonim", async (ctx) => {
   await ctx.scene.enter("anonimScene");
   ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
+  ctx.editMessageReplyMarkup();
 });
 
 bot.action("simple", async (ctx) => {
   await ctx.scene.enter("senderScene");
   ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
+  ctx.editMessageReplyMarkup();
 });
 
 bot.action("cencel", async (ctx) => {
@@ -59,12 +69,16 @@ bot.action("cencel", async (ctx) => {
   );
   await ctx.scene.leave();
   ctx.answerCbQuery("Bekor qilindi ✅");
+  setTimeout(() => {
+    ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id);
+  }, 500);
 });
 
 bot.action(/reply_(\d+)/, async (ctx) => {
   ctx.session.userId = ctx.match[1];
   ctx.scene.enter("adminReplyScene");
   ctx.answerCbQuery();
+  ctx.editMessageReplyMarkup();
 });
 
 bot.on("text", async (ctx) => {
