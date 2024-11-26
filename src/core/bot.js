@@ -25,14 +25,6 @@ bot.start(async (ctx) => {
       },
     }
   );
-
-  try {
-    axios.get(`${process.env.API}chatId?chatId=${ctx.chat.id}`).then((res) => {
-      console.log(res.data);
-    });
-  } catch (err) {
-    console.error(err);
-  }
 });
 
 bot.command("new_message", async (ctx) => {
