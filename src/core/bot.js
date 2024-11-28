@@ -70,7 +70,6 @@ bot.action(/reply_(\d+)/, async (ctx) => {
   ctx.session.userId = ctx.match[1];
   ctx.scene.enter("adminReplyScene");
   ctx.answerCbQuery();
-  ctx.editMessageReplyMarkup();
 });
 
 bot.on("text", async (ctx) => {
