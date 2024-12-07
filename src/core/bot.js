@@ -1,14 +1,49 @@
 const { Telegraf, session, Scenes } = require("telegraf");
+const axios = require("axios");
 const { anonimScene, senderScene, adminReplyScene } = require("./scenes");
 require("dotenv").config();
 
 const bot = new Telegraf(process.env.TOKEN);
+const api = process.env.API;
 
 const stage = new Scenes.Stage([anonimScene, senderScene, adminReplyScene]);
 bot.use(session());
 bot.use(stage.middleware());
 
+const getUser = async (chatId) => {
+  try {
+    const response = await axios.get(`${api}?chatId=${chatId}`);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
 bot.start(async (ctx) => {
+  const takenUser = await getUser(ctx.chat.id);
+
+  if (takenUser.length == 0) {
+    axios.post(api, {
+      firstName: ctx.from.first_name,
+      chatId: ctx.chat.id,
+      username: ctx.from.username,
+    });
+    ctx.telegram.sendMessage(
+      -1002069272637,
+      `Yangi foydalanuvchi ro'yxatdan o'tdi!\n👤 Ism: <a href="tg://user?id=${
+        ctx.from.id
+      }">${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${
+        ctx.from.id
+      }</code>\n🔗 Username: ${
+        ctx.from.username === undefined
+          ? "Username not set"
+          : "@" + ctx.from.username
+      }`,
+      { parse_mode: "HTML" }
+    );
+  }
+
   await ctx.reply(
     `Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
     {
@@ -25,6 +60,82 @@ bot.start(async (ctx) => {
       },
     }
   );
+});
+
+const getUsers = async () => {
+  try {
+    const response = await axios.get(api);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+bot.command("broadcast", async (ctx) => {
+  if (ctx.chat.id == 5511267540) {
+    try {
+      const takenUsers = await getUsers();
+
+      const args = ctx.msg.text.split(" ");
+      if (args.length < 2) {
+        return ctx.reply("Noto'g'ri format!");
+      }
+
+      const postId = args[1];
+      const channelId = -1002460351194;
+
+      await takenUsers.map(async (user) => {
+        await ctx.telegram.copyMessage(user.chatId, channelId, postId);
+      });
+      ctx.telegram.sendMessage(
+        5511267540,
+        `Xabar barcha foydalanuvchilarga muvaffaqiyatli yuborildi`
+      );
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.error_code === 400) {
+        ctx.reply("Post topilmadi");
+      } else {
+        ctx.reply("Noma'lum xatolik yuzaga keldi");
+      }
+    }
+  } else {
+    ctx.reply("Bu buyruq siz uchun emas!");
+  }
+});
+
+bot.command("forward", async (ctx) => {
+  if (ctx.chat.id == 5511267540) {
+    try {
+      const takenUsers = await getUsers();
+      console.log(
+        takenUsers.map((user) => {
+          return user.chatId;
+        })
+      );
+      const args = ctx.msg.text.split(" ");
+      if (args.length < 2) {
+        return ctx.reply("Noto'g'ri format!");
+      }
+
+      const postId = args[1];
+      const channelId = -1002460351194;
+
+      takenUsers.map(async (user) => {
+        await ctx.telegram.forwardMessage(user.chatId, channelId, postId);
+      });
+      ctx.telegram.sendMessage(
+        5511267540,
+        `Xabar barcha foydalanuvchilarga muvaffaqiyatli yuborildi`
+      );
+    } catch (err) {
+      console.error(err);
+      ctx.reply("Noma'lum xatolik yuzaga keldi");
+    }
+  } else {
+    ctx.reply("Bu buyruq siz uchun emas!");
+  }
 });
 
 bot.command("new_message", async (ctx) => {
