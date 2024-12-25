@@ -10,6 +10,16 @@ const stage = new Scenes.Stage([anonimScene, senderScene, adminReplyScene]);
 bot.use(session());
 bot.use(stage.middleware());
 
+bot.use(async (ctx, next) => {
+  if (ctx.chat?.type == "group" || ctx.chat?.type == "supergroup") {
+    await ctx.reply(
+      "Ushbu bot faqat shaxsiyda ishlaydi!\nIltimos shaxsiy chatdan foydalanib qaytadan urinib ko'ring"
+    );
+    return;
+  }
+  await next();
+});
+
 const getUser = async (chatId) => {
   try {
     const response = await axios.get(`${api}?chatId=${chatId}`);
@@ -21,7 +31,7 @@ const getUser = async (chatId) => {
 };
 
 bot.start(async (ctx) => {
-  const takenUser = await getUser(ctx.chat.id);
+  /*   const takenUser = await getUser(ctx.chat.id);
 
   if (takenUser.length == 0) {
     axios.post(api, {
@@ -42,7 +52,7 @@ bot.start(async (ctx) => {
       }`,
       { parse_mode: "HTML" }
     );
-  }
+  } */
 
   await ctx.reply(
     `Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
@@ -62,7 +72,7 @@ bot.start(async (ctx) => {
   );
 });
 
-const getUsers = async () => {
+/* const getUsers = async () => {
   try {
     const response = await axios.get(api);
     return response.data;
@@ -137,7 +147,7 @@ bot.command("forward", async (ctx) => {
     ctx.reply("Bu buyruq siz uchun emas!");
   }
 });
-
+ */
 bot.command("new_message", async (ctx) => {
   await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
     reply_markup: {
@@ -155,7 +165,9 @@ bot.command("new_message", async (ctx) => {
 
 bot.action("anonim", async (ctx) => {
   await ctx.scene.enter("anonimScene");
-  ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring");
+  ctx.answerCbQuery("Iltimos faqat matnli xabar yuboring", {
+    show_alert: true,
+  });
   ctx.editMessageReplyMarkup();
 });
 
@@ -203,8 +215,13 @@ bot.catch((err, ctx) => {
   );
 });
 
-bot.launch(() => {
-  console.log(`Bot started!`);
-});
+bot.launch(
+  {
+    dropPendingUpdates: true,
+  },
+  () => {
+    console.log(`Bot started!`);
+  }
+);
 
 module.exports = bot;
