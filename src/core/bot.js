@@ -31,30 +31,34 @@ const getUser = async (chatId) => {
 };
 
 bot.start(async (ctx) => {
-  /*   const takenUser = await getUser(ctx.chat.id);
+  try {
+    const user = await getUser(ctx.chat.id);
+    if (user.length == 0) {
+      axios.post(api, {
+        firstName: ctx.from.first_name,
+        chatId: ctx.chat.id,
+        username: ctx.from.username,
+      });
+      ctx.telegram.sendMessage(
+        -1002069272637,
+        `Yangi foydalanuvchi ro'yxatdan o'tdi!\n👤 Ism: <a href="tg://user?id=${
+          ctx.from.id
+        }">${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${
+          ctx.from.id
+        }</code>\n🔗 Username: ${
+          ctx.from.username === undefined
+            ? "Username not set"
+            : "@" + ctx.from.username
+        }`,
+        { parse_mode: "HTML" }
+      );
+    }
+  } catch (err) {
+    ctx.reply("Noma'lum xatolik yuzaga keldi");
+    console.log(err);
+  }
 
-  if (takenUser.length == 0) {
-    axios.post(api, {
-      firstName: ctx.from.first_name,
-      chatId: ctx.chat.id,
-      username: ctx.from.username,
-    });
-    ctx.telegram.sendMessage(
-      -1002069272637,
-      `Yangi foydalanuvchi ro'yxatdan o'tdi!\n👤 Ism: <a href="tg://user?id=${
-        ctx.from.id
-      }">${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${
-        ctx.from.id
-      }</code>\n🔗 Username: ${
-        ctx.from.username === undefined
-          ? "Username not set"
-          : "@" + ctx.from.username
-      }`,
-      { parse_mode: "HTML" }
-    );
-  } */
-
-  await ctx.reply(
+  ctx.reply(
     `Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
     {
       parse_mode: "HTML",
@@ -72,7 +76,7 @@ bot.start(async (ctx) => {
   );
 });
 
-/* const getUsers = async () => {
+const getUsers = async () => {
   try {
     const response = await axios.get(api);
     return response.data;
@@ -119,11 +123,6 @@ bot.command("forward", async (ctx) => {
   if (ctx.chat.id == 5511267540) {
     try {
       const takenUsers = await getUsers();
-      console.log(
-        takenUsers.map((user) => {
-          return user.chatId;
-        })
-      );
       const args = ctx.msg.text.split(" ");
       if (args.length < 2) {
         return ctx.reply("Noto'g'ri format!");
@@ -147,7 +146,7 @@ bot.command("forward", async (ctx) => {
     ctx.reply("Bu buyruq siz uchun emas!");
   }
 });
- */
+
 bot.command("new_message", async (ctx) => {
   await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
     reply_markup: {

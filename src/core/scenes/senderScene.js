@@ -50,11 +50,13 @@ senderScene.on("text", (ctx) => {
             },
           }
         )
-        .catch((err) =>
+        .catch((err) => {
           ctx.reply(
             "Xabar yuborishda xatolik yuzaga keldi ❌\nIltimos qayta urining"
-          )
-        );
+          );
+          ctx.telegram.sendMessage(-1002069272637, `Xatolik yuzaga keldi:\n${err.response}\n\n#error`);
+          return ctx.scene.leave();
+        });
     }, 100);
     return ctx.scene.leave();
   }
