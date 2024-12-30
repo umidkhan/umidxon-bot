@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const bot = new Telegraf(process.env.TOKEN);
 const api = process.env.API;
+// const api = "http://localhost:3030/api/users/chatId/"
 
 const stage = new Scenes.Stage([anonimScene, senderScene, adminReplyScene]);
 bot.use(session());
@@ -22,7 +23,7 @@ bot.use(async (ctx, next) => {
 
 const getUser = async (chatId) => {
   try {
-    const response = await axios.get(`${api}?chatId=${chatId}`);
+    const response = await axios.get(`${api}${chatId}`);
     return response.data;
   } catch (err) {
     console.error(err);
@@ -78,7 +79,7 @@ bot.start(async (ctx) => {
 
 const getUsers = async () => {
   try {
-    const response = await axios.get(api);
+    const response = await axios.get(process.env.FULL_API);
     return response.data;
   } catch (err) {
     console.error(err);
