@@ -34,8 +34,8 @@ const getUser = async (chatId) => {
 bot.start(async (ctx) => {
   try {
     const user = await getUser(ctx.chat.id);
-    if (user.length == 0) {
-      axios.post(api, {
+    if (user == 0) {
+      axios.post(process.env.FULL_API, {
         firstName: ctx.from.first_name,
         chatId: ctx.chat.id,
         username: ctx.from.username,

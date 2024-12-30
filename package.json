@@ -6,7 +6,6 @@
   "scripts": {
     "start": "nodemon ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dotenv": "npx dotenv-vault@latest push",
     "dev": "nodemon src/core/bot.js"
   },
   "keywords": [],
