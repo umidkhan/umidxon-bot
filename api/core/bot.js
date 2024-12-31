@@ -21,7 +21,7 @@ bot.use(async (ctx, next) => {
   await next();
 });
 
-const getUser = async (chatId) => {
+/* const getUser = async (chatId) => {
   try {
     const response = await axios.get(`${api}${chatId}`);
     return response.data;
@@ -29,10 +29,10 @@ const getUser = async (chatId) => {
     console.error(err);
     return [];
   }
-};
+}; */
 
 bot.start(async (ctx) => {
-  try {
+/*   try {
     const user = await getUser(ctx.chat.id);
     if (user == 0) {
       axios.post(process.env.FULL_API, {
@@ -57,7 +57,7 @@ bot.start(async (ctx) => {
   } catch (err) {
     ctx.reply("Noma'lum xatolik yuzaga keldi");
     console.log(err);
-  }
+  } */
 
   ctx.reply(
     `Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
@@ -77,7 +77,7 @@ bot.start(async (ctx) => {
   );
 });
 
-const getUsers = async () => {
+/* const getUsers = async () => {
   try {
     const response = await axios.get(process.env.FULL_API);
     return response.data;
@@ -146,7 +146,7 @@ bot.command("forward", async (ctx) => {
   } else {
     ctx.reply("Bu buyruq siz uchun emas!");
   }
-});
+}); */
 
 bot.command("new_message", async (ctx) => {
   await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
