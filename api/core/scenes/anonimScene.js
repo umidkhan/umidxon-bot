@@ -9,37 +9,6 @@ anonimScene.enter((ctx) => {
   });
 });
 
-anonimScene.on("message", async (ctx) => {
-  await ctx.copyMessage(5511267540, ctx.msg.message_id).then(() =>
-    ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
-      parse_mode: "HTML",
-    })
-  );
-  ctx.telegram
-    .sendMessage(5511267540, `✉️ <b>Sizda yangi anonim xabar bor </b>👆`, {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Javob berish",
-              callback_data: `reply_${ctx.from.id}`,
-            },
-          ],
-        ],
-      },
-    })
-    .catch((err) => {
-      ctx.telegram.sendMessage(
-        -1002069272637,
-        `<a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a> foydalanuvchi bilan xatolik yuz berdi: \n${err.message}`,
-        { parse_mode: "HTML" }
-      );
-      console.error(err);
-    });
-  return ctx.scene.leave();
-});
-
 anonimScene.on("text", async (ctx) => {
   if (ctx.msg.text.startsWith("/")) {
     ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
@@ -74,6 +43,41 @@ anonimScene.on("text", async (ctx) => {
       });
     return ctx.scene.leave();
   }
+});
+
+anonimScene.on("message", async (ctx) => {
+  if (ctx.msg.text.startsWith("/")) {
+    ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
+  }
+
+  await ctx.copyMessage(5511267540, ctx.msg.message_id).then(() =>
+    ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
+      parse_mode: "HTML",
+    })
+  );
+  ctx.telegram
+    .sendMessage(5511267540, `✉️ <b>Sizda yangi anonim xabar bor </b>👆`, {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Javob berish",
+              callback_data: `reply_${ctx.from.id}`,
+            },
+          ],
+        ],
+      },
+    })
+    .catch((err) => {
+      ctx.telegram.sendMessage(
+        -1002069272637,
+        `<a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a> foydalanuvchi bilan xatolik yuz berdi: \n${err.message}`,
+        { parse_mode: "HTML" }
+      );
+      console.error(err);
+    });
+  return ctx.scene.leave();
 });
 
 /* anonimScene.on("message", (ctx) => {
