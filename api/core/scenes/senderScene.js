@@ -3,12 +3,12 @@ const { Scenes } = require("telegraf");
 const senderScene = new Scenes.BaseScene("senderScene");
 senderScene.enter((ctx) =>
   ctx.reply(
-    `Matnli xabar yuboring\nXabar kim tomonidan yuborilgani @umidxon_polatxonov'ga ko'rinadi ⚠️`,
+    `Istalgan turdagi xabar yuborishingiz mumkin (Sticker, GIF, video va hkz) ✅\nXabar kim tomonidan yuborilgani @umidxon_polatxonov'ga ko'rinadi ⚠️`,
     {
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "Bekor qilish ❌", callback_data: "cencel" }],
+          [{ text: "Bekor qilish ❌", callback_data: "cancel" }],
         ],
       },
     }
@@ -19,10 +19,6 @@ senderScene.on("text", (ctx) => {
   if (ctx.msg.text.startsWith("/")) {
     ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
   } else {
-    ctx.reply(
-      `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
-      { parse_mode: "HTML" }
-    );
     setTimeout(() => {
       ctx.telegram
         .sendMessage(
@@ -42,7 +38,7 @@ senderScene.on("text", (ctx) => {
               inline_keyboard: [
                 [
                   {
-                    text: "Javob berish",
+                    text: "Javob berish ⏩",
                     callback_data: `reply_${ctx.from.id}`,
                   },
                 ],
@@ -59,6 +55,13 @@ senderScene.on("text", (ctx) => {
             `Xatolik yuzaga keldi:\n${err.response}\n\n#error`
           );
           return ctx.scene.leave();
+        })
+        .then(async () => {
+          ctx.reply(
+            `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
+            { parse_mode: "HTML" }
+          );
+          await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
         });
     }, 100);
     return ctx.scene.leave();
@@ -66,9 +69,6 @@ senderScene.on("text", (ctx) => {
 });
 
 senderScene.on("message", async (ctx) => {
-  if (ctx.msg.text.startsWith("/")) {
-    ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
-  }
   await ctx.copyMessage(5511267540, ctx.msg.message_id).then(() => {
     ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
       parse_mode: "HTML",
@@ -92,7 +92,7 @@ senderScene.on("message", async (ctx) => {
           inline_keyboard: [
             [
               {
-                text: "Javob berish",
+                text: "Javob berish ⏩",
                 callback_data: `reply_${ctx.from.id}`,
               },
             ],
@@ -111,7 +111,8 @@ senderScene.on("message", async (ctx) => {
 });
 
 /* senderScene.on("message", (ctx) => {
-  ctx.reply("Iltimos faqat matnli xabar yuboring!");
+  ctx.reply("Iltimos faqat Istalgan turdagi xabar yuborishingiz mumkin 
+(Sticker, GIF, video va hkz) ✅!");
 }); */
 
 module.exports = senderScene;

@@ -3,35 +3,49 @@ const { Scenes } = require("telegraf");
 const adminReplyScene = new Scenes.BaseScene("adminReplyScene");
 
 adminReplyScene.enter((ctx) => {
-  ctx.reply("Matnli xabar yuboring", {
-    reply_markup: {
-      inline_keyboard: [[{ text: "Bekor qilish ❌", callback_data: "cencel" }]],
-    },
-  });
+  ctx.reply(
+    "Istalgan turdagi xabar yuborishingiz mumkin (Sticker, GIF, video va hkz) ✅",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "Bekor qilish ❌", callback_data: "cancel" }],
+        ],
+      },
+    }
+  );
 });
 
 adminReplyScene.on("text", async (ctx) => {
-  if (!ctx.msg.text.startsWith("/")) {
+  if (ctx.msg.text.startsWith("/")) {
+    ctx.reply(`Kechirasiz, bot buyruqlarini yuborish imkonsiz`);
+  } else {
     try {
-      await ctx.telegram.sendMessage(
-        ctx.session.userId,
-        `📨 <b>Sizga Umidxondan yangi xabar: </b>\n\n<i>${ctx.msg.text}</i>`,
-        {
-          parse_mode: "HTML",
-          reply_markup: {
-            inline_keyboard: [
-              [
-                { text: "🛡 Anonim javob berish", callback_data: "anonim" },
-                { text: "👀 Anonim emas", callback_data: "simple" },
+      await ctx.telegram
+        .sendMessage(
+          ctx.session.userId,
+          `📨 <b>Sizga <a href="https://t.me/umidxon_polatxonov">Umidxon</a>dan yangi xabar: </b>\n\n<i>${ctx.msg.text}</i>\n\nℹ️ Javob berish uchun pastdagi 2 usuldan birini tanlang 👇`,
+          {
+            parse_mode: "HTML",
+            link_preview_options: {
+              is_disabled: true,
+            },
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: "🛡 Anonim ⏩", callback_data: "anonim" },
+                  { text: "👀 Anonim emas ⏩", callback_data: "simple" },
+                ],
               ],
-            ],
-            resize_keyboard: true,
-          },
-        }
-      );
-      ctx.reply(`<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>`, {
-        parse_mode: "HTML",
-      });
+              resize_keyboard: true,
+            },
+          }
+        )
+        .then(async () => {
+          ctx.reply(`<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>`, {
+            parse_mode: "HTML",
+          });
+          await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+        });
     } catch (err) {
       console.error(err.response);
       if (err.response.error_code === 403) {
@@ -48,10 +62,41 @@ adminReplyScene.on("text", async (ctx) => {
         );
       }
     }
-  } else {
-    ctx.reply(`Kechirasiz, bot buyruqlarini yuborish imkonsiz`);
   }
   return ctx.scene.leave();
+});
+
+adminReplyScene.on("message", async (ctx) => {
+  setTimeout(async () => {
+    await ctx.telegram.sendMessage(
+      ctx.session.userId,
+      `📨 <b>Sizga <a href="https://t.me/umidxon_polatxonov">Umidxon</a>dan yangi xabar 👆</b>\n\nℹ️ Javob berish uchun pastdagi 2 usuldan birini tanlang 👇`,
+      {
+        parse_mode: "HTML",
+        link_preview_options: {
+          is_disabled: true,
+        },
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "🛡 Anonim", callback_data: "anonim" },
+              { text: "👀 Anonim emas", callback_data: "simple" },
+            ],
+          ],
+          resize_keyboard: true,
+        },
+      }
+    );
+  }, 600);
+
+  await ctx.telegram
+    .copyMessage(ctx.session.userId, 5511267540, ctx.msg.message_id)
+    .then(async () => {
+      ctx.reply(`<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>`, {
+        parse_mode: "HTML",
+      });
+      await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+    });
 });
 
 module.exports = adminReplyScene;

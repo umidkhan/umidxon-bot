@@ -90,62 +90,6 @@ bot.start(async (ctx) => {
   );
 });
 
-/* bot.start(async (ctx) => {
-    try {
-    const user = await getUser(ctx.chat.id);
-    if (user == 0) {
-      axios.post(process.env.FULL_API, {
-        firstName: ctx.from.first_name,
-        chatId: ctx.chat.id,
-        username: ctx.from.username,
-      });
-      ctx.telegram.sendMessage(
-        -1002069272637,
-        `Yangi foydalanuvchi ro'yxatdan o'tdi!\n👤 Ism: <a href="tg://user?id=${
-          ctx.from.id
-        }">${ctx.from.first_name}</a>\n🆔 Chat ID: <code>${
-          ctx.from.id
-        }</code>\n🔗 Username: ${
-          ctx.from.username === undefined
-            ? "Username not set"
-            : "@" + ctx.from.username
-        }`,
-        { parse_mode: "HTML" }
-      );
-    }
-  } catch (err) {
-    ctx.reply("Noma'lum xatolik yuzaga keldi");
-    console.log(err);
-  }
-
-  ctx.reply(
-    `Assalomu alaykum <b><a href="tg://user?id=${ctx.from.id}" >${ctx.from.first_name}</a></b>\n@umidxon_polatxonov'ga xabar yuborish uchun pastdagi istalgan turni tanlang 👇`,
-    {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: "🛡 Anonim", callback_data: "anonim" },
-            { text: "👀 Anonim emas", callback_data: "simple" },
-          ],
-        ],
-        one_time_keyboard: true,
-        resize_keyboard: true,
-      },
-    }
-  );
-}); */
-
-const getUsers = async () => {
-  try {
-    const response = await axios.get(process.env.FULL_API);
-    return response.data;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
 bot.command("broadcast", async (ctx) => {
   if (ctx.chat.id == 5511267540) {
     try {
@@ -220,34 +164,6 @@ bot.command("forward", async (ctx) => {
   }
 });
 
-/* bot.command("forward", async (ctx) => {
-  if (ctx.chat.id == 5511267540) {
-    try {
-      const takenUsers = await getUsers();
-      const args = ctx.msg.text.split(" ");
-      if (args.length < 2) {
-        return ctx.reply("Noto'g'ri format!");
-      }
-
-      const postId = args[1];
-      const channelId = -1002460351194;
-
-      takenUsers.map(async (user) => {
-        await ctx.telegram.forwardMessage(user.chatId, channelId, postId);
-      });
-      ctx.telegram.sendMessage(
-        5511267540,
-        `Xabar barcha foydalanuvchilarga muvaffaqiyatli yuborildi`
-      );
-    } catch (err) {
-      console.error(err);
-      ctx.reply("Noma'lum xatolik yuzaga keldi");
-    }
-  } else {
-    ctx.reply("Bu buyruq siz uchun emas!");
-  }
-}); */
-
 bot.command("new_message", async (ctx) => {
   await ctx.reply("Qaysi turda xabar yubormoqchisiz? 👇", {
     reply_markup: {
@@ -275,16 +191,17 @@ bot.action("simple", async (ctx) => {
   ctx.editMessageReplyMarkup();
 });
 
-bot.action("cencel", async (ctx) => {
+bot.action("cancel", async (ctx) => {
   ctx.reply(
     "<b>Muvaffaqiyatli bekor qilindi</b>\nYangi xabar yuborish uchun <b>/new_message</b> buyrug'idan foydalanishingiz mumkin",
     { parse_mode: "HTML" }
   );
   await ctx.scene.leave();
   ctx.answerCbQuery("Bekor qilindi ✅");
-  setTimeout(() => {
+  setTimeout(async () => {
+    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
     ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }, 500);
+  }, 100);
 });
 
 bot.action(/reply_(\d+)/, async (ctx) => {
@@ -300,7 +217,9 @@ bot.on("text", async (ctx) => {
 });
 
 bot.on("message", async (ctx) => {
-  await ctx.reply("Faqat matnli xabar qabul qilinadi");
+  await ctx.replyWithHTML(
+    "Buyruqlar ro'yxati: \n/start - Botni ishga tushirish\n/new_message - Yangi xabar yuborish\n\n<b>Iltimos faqat buyruqlarni yuboring ❗️</b>"
+  );
 });
 
 bot.catch((err, ctx) => {

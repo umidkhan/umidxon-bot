@@ -2,21 +2,22 @@ const { Scenes } = require("telegraf");
 
 const anonimScene = new Scenes.BaseScene("anonimScene");
 anonimScene.enter((ctx) => {
-  ctx.reply("Matnli xabar yuboring", {
-    reply_markup: {
-      inline_keyboard: [[{ text: "Bekor qilish ❌", callback_data: "cencel" }]],
-    },
-  });
+  ctx.reply(
+    "Istalgan turdagi xabar yuborishingiz mumkin (Sticker, GIF, video va hkz) ✅",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "Bekor qilish ❌", callback_data: "cancel" }],
+        ],
+      },
+    }
+  );
 });
 
 anonimScene.on("text", async (ctx) => {
   if (ctx.msg.text.startsWith("/")) {
     ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
   } else {
-    ctx.reply(
-      `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
-      { parse_mode: "HTML" }
-    );
     await ctx.telegram
       .sendMessage(
         5511267540,
@@ -27,7 +28,7 @@ anonimScene.on("text", async (ctx) => {
             inline_keyboard: [
               [
                 {
-                  text: "Javob berish",
+                  text: "Javob berish ⏩",
                   callback_data: `reply_${ctx.from.id}`,
                 },
               ],
@@ -40,20 +41,25 @@ anonimScene.on("text", async (ctx) => {
           "Xabar yuborishda xatolik yuzaga keldi ❌\nIltimos qayta urining"
         );
         console.error(err);
+      })
+      .then(async () => {
+        ctx.reply(
+          `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
+          { parse_mode: "HTML" }
+        );
+        await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
       });
     return ctx.scene.leave();
   }
 });
 
 anonimScene.on("message", async (ctx) => {
-  if (ctx.msg.text.startsWith("/")) {
-    ctx.reply("Kechirasiz, bot buyruqlarini yuborish imkonsiz");
-  }
-
-  await ctx.copyMessage(5511267540, ctx.msg.message_id).then(() =>
-    ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
-      parse_mode: "HTML",
-    })
+  await ctx.copyMessage(5511267540, ctx.chat.id, ctx.msg.message_id).then(
+    async () =>
+      ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
+        parse_mode: "HTML",
+      }),
+    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1)
   );
   ctx.telegram
     .sendMessage(5511267540, `✉️ <b>Sizda yangi anonim xabar bor </b>👆`, {
@@ -62,7 +68,7 @@ anonimScene.on("message", async (ctx) => {
         inline_keyboard: [
           [
             {
-              text: "Javob berish",
+              text: "Javob berish ⏩",
               callback_data: `reply_${ctx.from.id}`,
             },
           ],
@@ -79,9 +85,5 @@ anonimScene.on("message", async (ctx) => {
     });
   return ctx.scene.leave();
 });
-
-/* anonimScene.on("message", (ctx) => {
-  ctx.reply("Iltimos faqat matnli xabar yuboring!");
-}); */
 
 module.exports = anonimScene;
