@@ -198,10 +198,8 @@ bot.action("cancel", async (ctx) => {
   );
   await ctx.scene.leave();
   ctx.answerCbQuery("Bekor qilindi ✅");
-  setTimeout(async () => {
-    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
-    ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }, 100);
+  await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+  ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id);
 });
 
 bot.action(/reply_(\d+)/, async (ctx) => {

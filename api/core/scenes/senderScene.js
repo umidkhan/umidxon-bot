@@ -61,7 +61,7 @@ senderScene.on("text", (ctx) => {
             `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
             { parse_mode: "HTML" }
           );
-          await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+          // await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
         });
     }, 100);
     return ctx.scene.leave();

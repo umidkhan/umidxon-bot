@@ -44,7 +44,7 @@ adminReplyScene.on("text", async (ctx) => {
           ctx.reply(`<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>`, {
             parse_mode: "HTML",
           });
-          await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+          // await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
         });
     } catch (err) {
       console.error(err.response);
@@ -95,7 +95,7 @@ adminReplyScene.on("message", async (ctx) => {
       ctx.reply(`<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>`, {
         parse_mode: "HTML",
       });
-      await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+      // await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
     });
 });
 

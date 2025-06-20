@@ -47,7 +47,7 @@ anonimScene.on("text", async (ctx) => {
           `<b>Xabaringiz muvaffaqiyatli yuborildi ✅</b>\nYana xabar yuborish uchun /new_message buyru'gidan foydalaning`,
           { parse_mode: "HTML" }
         );
-        await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
+        // await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1);
       });
     return ctx.scene.leave();
   }
@@ -58,8 +58,8 @@ anonimScene.on("message", async (ctx) => {
     async () =>
       ctx.reply("<b> Xabaringiz muvaffaqiyatli yuborildi </b> ✅", {
         parse_mode: "HTML",
-      }),
-    await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1)
+      })
+    // await ctx.telegram.deleteMessage(ctx.chat.id, ctx.msg.message_id - 1)
   );
   ctx.telegram
     .sendMessage(5511267540, `✉️ <b>Sizda yangi anonim xabar bor </b>👆`, {
